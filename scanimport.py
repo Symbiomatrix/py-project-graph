@@ -160,8 +160,9 @@ class DotWriter(Writer):
 def match_import(lmodules, limports):
     """Match imports to known files list.
     
-    Normally, I expect imports to be a partial right match to the files -
-    a relative import drops its own nesting.
+    Normally, I expect imports to be either an exact match,
+     or partial right match with period to the files -
+     a relative import drops additional nesting to the left.
     I don't know how complex imports would fare.
     Might match ambiguously with multiple files - in which case idc,
      send an edge to all of them. Creep: Should highlight such edges.
@@ -170,7 +171,9 @@ def match_import(lmodules, limports):
     lnodes = []
     lextern = []
     for vimport in limports:
-        lmatch = [flnm for flnm in lmodules if flnm.endswith(vimport)]
+        lmatch = [flnm for flnm in lmodules
+                  if (flnm.endswith("." + vimport)
+                      or flnm == vimport)]
         if len(lmatch) == 0: # External.
             lextern.append(vimport)
         else:
