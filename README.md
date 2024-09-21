@@ -11,7 +11,7 @@ Found none to be satisfactory - some for old versions and abandoned, some diffic
 - Matches relative imports to the full name.
 - Splits the imports to project graph and external graph - external imports are ones which do not appear to exist in the project directory. This further reduces the clutter, as each graph is structed differently (tree vs bush) and serves a different purpose.
 - Creates a simple dot graph (based on [pyan's writer class and module](https://github.com/Technologicat/pyan)).
-- An interactive standalone html visualiser is included which reads output graphs and highlights on hover / click nodes and their neighbours - this makes tracing a dependency path much easier without much prior knowledge.
+- An interactive standalone html visualiser is included which reads output graphs and highlights on hover / click nodes and their neighbours - this makes tracing a dependency path much easier without much prior knowledge. The visualiser has been tested and runs flawlessly on the latest chrome, waterfox and even waterfox classic.
 
 ## Usage notes
 - Update scanimport.DIRPROJ to the project directory of your choice and run it.
