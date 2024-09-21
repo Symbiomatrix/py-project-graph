@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphviz Node Highlight</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/viz.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/full.render.js"></script>
+    <style>
+        #graph-container {
+            width: 100%;
+            height: 100vh;
+            overflow: auto;
+        }
+        .hovered text {
+            fill: black !important;
+            font-weight: bold !important;
+        }
+        .hovered ellipse {
+            fill: red !important;
+        }
+        .neighbored text {
+            fill: black !important;
+            font-weight: bold !important;
+        }
+        .neighbored ellipse {
+            fill: red !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Graphviz Node Highlight</h1>
+    <input type="file" id="fileInput" accept=".dot">
+    <input type="number" id="scaleInput" value="413" step="1" min="1">%
+    <div id="graph-container"></div>
+
+    <script>
+        let currentlyHighlighted = null;
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dotString = e.target.result;
+                    renderGraph(dotString);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        document.getElementById('scaleInput').addEventListener('input', function() {
+            const scaleValue = this.value;
+            document.documentElement.style.setProperty('--scale', scaleValue);
+        });
+
+        // Render the DOT graph
+        function renderGraph(dotString) {
+            const viz = new Viz();
+
+            viz.renderSVGElement(dotString)
+                .then(function(svgElement) {
+                    const container = document.getElementById('graph-container');
+                    container.innerHTML = '';
+                    container.appendChild(svgElement);
+
+                    // Add click event listeners for nodes
+                    const nodes = svgElement.querySelectorAll('g.node');
+                    nodes.forEach(node => {
+                        node.addEventListener('click', function() {
+                            toggleHighlight(node, svgElement);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error rendering the graph:', error);
+                });
+        }
+
+        // Toggle highlight on node click
+        function toggleHighlight(node, svgElement) {
+            const nodeId = node.querySelector('title').textContent.trim();
+
+            // Check if this node is already highlighted
+            const isHighlighted = currentlyHighlighted === node;
+
+            // Reset any existing highlights
+            resetHighlight(svgElement);
+
+            if (!isHighlighted) {
+                highlightAdjacentNodes(node, svgElement);
+                currentlyHighlighted = node; // Update currently highlighted node
+            } else {
+                currentlyHighlighted = null; // Clear reference if clicked again
+            }
+        }
+
+        // Highlight adjacent nodes and edges
+        function highlightAdjacentNodes(node, svgElement) {
+            const nodeId = node.querySelector('title').textContent.trim();
+            const scaleValue = document.getElementById('scaleInput').value;
+
+            // Highlight the node itself
+            node.classList.add('hovered');
+            const textElement = node.querySelector('text');
+            if (textElement) {
+                textElement.setAttribute('font-size', `${scaleValue}%`);
+            }
+
+            // Select all edges and check if they connect to the clicked node
+            const edges = svgElement.querySelectorAll('g.edge');
+            edges.forEach(edge => {
+                const edgeTitle = edge.querySelector('title').textContent.trim();
+                if (edgeTitle.includes(nodeId)) {
+                    // Highlight the edge
+                    edge.classList.add('hovered');
+
+                    // Determine the connected nodes based on the edge title
+                    const [source, target] = edgeTitle.split('->').map(title => title.trim());
+
+                    // Highlight neighbor nodes
+                    highlightNodeByTitle(svgElement, source);
+                    highlightNodeByTitle(svgElement, target);
+                }
+            });
+        }
+
+        // Highlight a node by its title
+        function highlightNodeByTitle(svgElement, title) {
+            const targetNode = Array.from(svgElement.querySelectorAll('g.node')).find(node => {
+                return node.querySelector('title').textContent.trim() === title;
+            });
+            if (targetNode) {
+                targetNode.classList.add('neighbored');
+                const textElement = targetNode.querySelector('text');
+                if (textElement) {
+                    const scaleValue = document.getElementById('scaleInput').value;
+                    textElement.setAttribute('font-size', `${scaleValue}%`);
+                }
+            }
+        }
+
+        // Reset highlight
+        function resetHighlight(svgElement) {
+            const highlighted = svgElement.querySelectorAll('.hovered, .neighbored');
+            highlighted.forEach(elem => {
+                elem.classList.remove('hovered');
+                elem.classList.remove('neighbored');
+                const textElement = elem.querySelector('text');
+                if (textElement) {
+                    textElement.setAttribute('font-size', '14'); // Reset to original size
+                }
+            });
+        }
+    </script>
+</body>
+</html>
