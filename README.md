@@ -22,3 +22,8 @@ Found none to be satisfactory - some for old versions and abandoned, some diffic
 ![Visualise1E](https://github.com/user-attachments/assets/803c40d0-1c17-4061-9200-10160a409b22)
 
 ![Visualise2E](https://github.com/user-attachments/assets/437a98eb-b0e6-4c47-8034-7ce747bd5c75)
+
+And this project's dependencies:
+
+![Visualise3](https://github.com/user-attachments/assets/adb8cf28-144d-4257-a13b-105514345582)
+
