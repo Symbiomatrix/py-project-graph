@@ -206,11 +206,6 @@ def scan_project_files(project_dir):
     else:
         scandir =  project_dir
     lfiles = list(glob(scandir, recursive = True))
-    # Why the fuck does gepetto keep using this crap.
-    # for root, _, files in os.walk(project_dir):
-    #     for file in files:
-    #         if file.endswith(".py"):
-    #            file_path = os.path.join(root, file)
     dmodules = dict()
     for file_path in lfiles:
         # Find what the file should be called in import syntax.
