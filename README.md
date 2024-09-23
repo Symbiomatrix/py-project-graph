@@ -14,7 +14,7 @@ Found none to be satisfactory - some for old versions and abandoned, some diffic
 - An interactive standalone html visualiser is included which reads output graphs and highlights on hover / click nodes and their neighbours - this makes tracing a dependency path much easier without much prior knowledge. The visualiser has been tested and runs flawlessly on the latest chrome, waterfox and even waterfox classic.
 
 ## Usage notes
-- Update scanimport.DIRPROJ to the project directory of your choice and run it.
+- Update scanimport.DIRPROJ to the project directory of your choice and run it. Or add argparse, I don't much care for it personally.
 - Open highlighterJS (click or hover) and load either the project or dependencies graph.
 
 ## Examples (from [bmaltais' kohya repo](https://github.com/bmaltais/kohya_ss/))
